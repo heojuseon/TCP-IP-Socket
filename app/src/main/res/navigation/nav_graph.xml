@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.study.socket_project.view.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_serverFragment"
+            app:destination="@id/serverFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_clientFragment"
+            app:destination="@id/clientFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/serverFragment"
+        android:name="com.study.socket_project.view.ServerFragment"
+        android:label="fragment_server"
+        tools:layout="@layout/fragment_server" />
+    <fragment
+        android:id="@+id/clientFragment"
+        android:name="com.study.socket_project.view.ClientFragment"
+        android:label="fragment_client"
+        tools:layout="@layout/fragment_client" >
+        <action
+            android:id="@+id/action_clientFragment_to_clientConnectFragment"
+            app:destination="@id/clientConnectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/clientConnectFragment"
+        android:name="com.study.socket_project.view.ClientConnectFragment"
+        android:label="fragment_connect"
+        tools:layout="@layout/fragment_clientconnect" />
+</navigation>

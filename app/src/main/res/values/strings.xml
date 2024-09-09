@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Socket_Project</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="server_fragment">ServerFragment</string>
+    <string name="client_fragment">ClientFragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="connect_fragment">ClientConnectFragment</string>
+
+    <string name="client_message_format">%1$s\n%2$s</string>
+</resources>
