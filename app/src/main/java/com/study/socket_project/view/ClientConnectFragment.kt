@@ -1,16 +1,17 @@
 package com.study.socket_project.view
 
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.study.socket_project.databinding.FragmentClientconnectBinding
 import java.io.DataInputStream
 import java.io.DataOutputStream
+import java.io.FileOutputStream
 import java.net.Socket
 import kotlin.concurrent.thread
 
@@ -33,7 +34,7 @@ class ClientConnectFragment : Fragment() {
 
         val ip_arg = arguments?.getString("ip")
         val port_arg = arguments?.getString("port")
-        Log.d("!@!@", "ip: $ip_arg | port: $port_arg")
+        Log.d("!@!@_ClientConnectFragment", "ip: $ip_arg | port: $port_arg")
 
         thread {
             try {
@@ -67,19 +68,20 @@ class ClientConnectFragment : Fragment() {
                 writer.writeUTF(message)
                 writer.flush()
 
-                //stream 추출
-                val inputStream = socket?.getInputStream()
-                val reader = DataInputStream(inputStream)
-
-                //server 로 부터 메시지 수신
-                val receivedMessage = reader.readUTF()
-                requireActivity().runOnUiThread {
-                    binding.fromServer.text = receivedMessage
+                if (message == "photo"){    //서버로 부터 메시지 수신
+                    receivePhotoFromServer()
+                } else {    //일반 텍스트 수신
+                    //stream 추출
+                    val inputStream = socket?.getInputStream()
+                    val reader = DataInputStream(inputStream)
+                    //server 로 부터 메시지 수신
+                    val receivedMessage = reader.readUTF()
+                    requireActivity().runOnUiThread {
+                        binding.fromServer.text = receivedMessage
+                    }
                 }
-
 //                //client 로 응답을 보내면 바로 socket 종료
 //                socket?.close()
-
             } catch (e: Exception){
                 requireActivity().runOnUiThread {
                     Toast.makeText(requireContext(), "메시지 전송 실패: ${e.message}", Toast.LENGTH_LONG).show()
@@ -89,9 +91,46 @@ class ClientConnectFragment : Fragment() {
         }
     }
 
+    private fun receivePhotoFromServer() {
+        try {
+            val inputStream = socket?.getInputStream()
+            val reader = DataInputStream(inputStream)
+
+            //서버에서 파일크기 수신
+            val fileSize = reader.readLong()
+            //server 로 부터 메시지 수신
+            val receivedMessage = reader.readUTF()
+            requireActivity().runOnUiThread {
+                binding.fromServer.text = receivedMessage
+            }
+            val buffer = ByteArray(4096)
+            var bytesRead: Int
+            var totalBytesRead = 0L
+
+            // 사진 파일을 저장할 경로 설정
+//            val filePath = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/Finebyme_20240627_114904914.jpg"
+            val filePath = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/FineByMe_20240701_153257232.jpg"
+            val fileOutputStream = FileOutputStream(filePath)
+
+            //서버에서 파일 데이터 수신
+            while (totalBytesRead < fileSize){
+                bytesRead = inputStream?.read(buffer) ?: -1
+                if (bytesRead == -1) break  // 스트림 끝일 때 루프 종료
+
+                fileOutputStream.write(buffer, 0, bytesRead)
+                totalBytesRead += bytesRead
+            }
+
+            fileOutputStream.close()
+            Log.d("!@!@_ClientConnectFragment", "사진 수신 완료")
+        } catch (e: Exception){
+            Log.d("!@!@_ClientConnectFragment", "사진 수신 실패: ${e.message}")
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("!@!@", "ClientConnectFragment onDestroyView")
+        Log.d("!@!@_ClientConnectFragment", "ClientConnectFragment onDestroyView")
         socket?.close()
     }
 }
