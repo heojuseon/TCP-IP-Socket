@@ -109,7 +109,9 @@ class ClientConnectFragment : Fragment() {
 
             // 사진 파일을 저장할 경로 설정
 //            val filePath = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/Finebyme_20240627_114904914.jpg"
-            val filePath = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/FineByMe_20240701_153257232.jpg"
+//            val filePath = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/FineByMe_20240701_153257232.jpg"
+            //동영상 파일
+            val filePath = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)}/20240911_142144.mp4"
             val fileOutputStream = FileOutputStream(filePath)
 
             //서버에서 파일 데이터 수신
@@ -119,6 +121,24 @@ class ClientConnectFragment : Fragment() {
 
                 fileOutputStream.write(buffer, 0, bytesRead)
                 totalBytesRead += bytesRead
+
+                //파일 다운로드 진행률 계산
+                val progress = ((totalBytesRead * 100) / fileSize).toInt()
+                Log.d("!@!@_ClientConnectFragment", "progress: $progress")
+                //UI 스레드에서 progressbar 업데이트
+//                requireActivity().runOnUiThread {
+//                    binding.downLoadProgressBar.visibility = View.VISIBLE
+//                    binding.downLoadProgressBar.progress = progress
+//                }
+                requireActivity().runOnUiThread {
+                    if (progress == 100){
+                        binding.downLoadProgressBar.visibility = View.GONE
+                        binding.downLoadProgressBar.progress = progress
+                    } else {
+                        binding.downLoadProgressBar.visibility = View.VISIBLE
+                        binding.downLoadProgressBar.progress = progress
+                    }
+                }
             }
 
             fileOutputStream.close()

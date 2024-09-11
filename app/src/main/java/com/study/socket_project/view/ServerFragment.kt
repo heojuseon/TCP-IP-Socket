@@ -192,13 +192,19 @@ class ServerFragment : Fragment() {
 
     private fun sendPhotoToClient() {
         // 사진 파일 경로 설정 (서버에 저장된 사진 파일 경로)
+//        val photoFile = File(
+//            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+//            "FineByMe_20240701_153257232.jpg"
+//        )
+        //동영상 파일
         val photoFile = File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-            "FineByMe_20240701_153257232.jpg"
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES),
+            "20240911_142144.mp4"
         )
 
         if (photoFile.exists()) {
             Log.d("!@!@_ServerFragment", "fileExists: $photoFile")
+            Log.d("!@!@_ServerFragment", "fileExists: ${photoFile.length()}")
             //파일 크기 정보를 먼저 전송
             writer?.writeLong(photoFile.length())
             writer?.writeUTF("client 로 응답 전송: 사진 전송 완료")
